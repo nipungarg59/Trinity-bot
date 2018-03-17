@@ -25,6 +25,8 @@ SECRET_KEY = os.environ['trinity_Django_Secret_key']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+TELEGRAM_API_BASE_URL = os.environ['telegram_base_api']
+
 ALLOWED_HOSTS = []
 
 
@@ -37,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +79,12 @@ WSGI_APPLICATION = 'Trinity.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ['trinity_Db_Name'],
+        'USER': os.environ['trinity_Db_User'],
+        'PASSWORD': os.environ['trinity_Db_Password'],
+        'HOST': os.environ['trinity_Db_Host'],
+        'PORT': os.environ['trinity_Db_Port'],
     }
 }
 
@@ -118,3 +126,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
