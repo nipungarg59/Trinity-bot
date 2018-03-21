@@ -1,3 +1,6 @@
-venv
 *.pyc
+
+venv
 variables.env
+
+celerybeat-schedule
