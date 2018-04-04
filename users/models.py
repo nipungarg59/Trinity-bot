@@ -1,5 +1,7 @@
 from django.db import models
 
+from users import constants as constants
+
 # Create your models here.
 
 
@@ -21,6 +23,13 @@ class Contests(models.Model):
         (6, 'SYSTEM_TEST'),
         (7, 'FINISHED')
     )
+
+    @property
+    def codeforces_contest_url(self):
+        return constants.CODEFORCES_CONTEST_BASE_URL + self.platform_id
+
+    class Meta:
+        index_together = [['platform', 'platform_id']]
 
 
 class Dictionary(models.Model):

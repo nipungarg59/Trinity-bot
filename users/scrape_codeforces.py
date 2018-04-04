@@ -2,8 +2,10 @@ import copy
 import json
 import requests
 
+from django.db.models import Q
+
 from users import constants as constants
-from users.models import Dictionary
+from users.models import Contests, Dictionary
 
 
 def make_hash(o):
@@ -30,7 +32,7 @@ def make_hash(o):
     return hash(tuple(frozenset(sorted(new_o.items()))))
 
 
-def scrape_contest_list(start=1, gym=False):
+def scrape_contest_list_helper(start=1, gym=False):
     """
     This will scrape all the codeforces contest list
     :return:
@@ -55,4 +57,22 @@ def scrape_contest_list(start=1, gym=False):
             if contest['id'] >= start:
                 contest_list_data.append(contest)
 
-    return contest_list_data
+    return sorted(contest_list_data, key=lambda k: k['id'])
+
+
+def scrape_contest_list(gym=False):
+    last_contest = Contests.objects.filter(~Q(phase='FINISHED'), platform='Codeforces').order_by("id").first()
+
+    if last_contest:
+        start = last_contest.platform_id
+
+    contest_list = scrape_contest_list_helper(start=start, gym=gym)
+
+    for contest in contest_list:
+        contest_db, created = Contests.objects.get_or_create(platform='Codeforces', platform_id=contest['id'])
+        contest_db.type = contest['type']
+        contest_db.phase = contest['phase']
+        contest_db.frozen = contest['frozen']
+        contest_db.duration_seconds = contest['durationSeconds']
+        contest_db.start_time = contest['startTimeSeconds']
+        contest_db.save()
