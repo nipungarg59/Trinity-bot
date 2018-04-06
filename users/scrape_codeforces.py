@@ -62,17 +62,19 @@ def scrape_contest_list_helper(start=1, gym=False):
 
 def scrape_contest_list(gym=False):
     last_contest = Contests.objects.filter(~Q(phase='FINISHED'), platform='Codeforces').order_by("id").first()
-
-    if last_contest:
-        start = last_contest.platform_id
-
-    contest_list = scrape_contest_list_helper(start=start, gym=gym)
-
-    for contest in contest_list:
-        contest_db, created = Contests.objects.get_or_create(platform='Codeforces', platform_id=contest['id'])
-        contest_db.type = contest['type']
-        contest_db.phase = contest['phase']
-        contest_db.frozen = contest['frozen']
-        contest_db.duration_seconds = contest['durationSeconds']
-        contest_db.start_time = contest['startTimeSeconds']
-        contest_db.save()
+    start = 1
+    # if last_contest:
+    #     start = last_contest.platform_id
+    #
+    # contest_list = scrape_contest_list_helper(start=start, gym=gym)
+    #
+    # for contest in contest_list:
+    #     contest_db, created = Contests.objects.get_or_create(platform='Codeforces', platform_id=contest['id'])
+    #     contest_db.type = contest['type']
+    #     contest_db.phase = contest['phase']
+    #     contest_db.frozen = contest['frozen']
+    #     contest_db.duration_seconds = contest['durationSeconds']
+    #     contest_db.start_time = contest['startTimeSeconds']
+    #     contest_db.save()
+    from users.tasks import send_message
+    send_message.delay('453502085', 'Scraped')

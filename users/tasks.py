@@ -2,7 +2,7 @@ import os
 import requests
 
 from Trinity.celery import app
-
+from users.scrape_codeforces import scrape_contest_list
 
 @app.task
 def send_message(chat_id, message, mode='Markdown'):
@@ -17,4 +17,4 @@ def send_message(chat_id, message, mode='Markdown'):
 
 @app.task
 def scrape_codeforces_contest():
-    pass
+    scrape_contest_list()
